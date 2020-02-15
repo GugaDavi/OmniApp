@@ -10,8 +10,8 @@ class HomeScreen extends StatelessWidget {
         drawer: DrawerMenu(),
         backgroundColor: Colors.black,
         appBar: AppBar(
-          backgroundColor: primaryColor,
-          elevation: 0,
+          backgroundColor: primaryDarkColor,
+          elevation: 4,
           iconTheme: IconThemeData(color: Colors.white),
         ),
         body: Stack(children: <Widget>[
@@ -42,7 +42,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 FloatingActionButton(
                   backgroundColor: primaryColor,
-                  child: Icon(Icons.add,
+                  child: Icon(Icons.search,
                       color: Colors.white, semanticLabel: 'ADICIONAR CONTA'),
                   onPressed: () {},
                 ),

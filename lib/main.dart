@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:omni_app/routes/route_generator.dart';
-import 'package:omni_app/ui/screens/home.dart';
+import 'package:omni_app/ui/screens/login.dart';
 
 void main() => runApp(MyApp());
 
@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       onGenerateRoute: RouterGenerator.generateRoute,
       title: 'Omni App',
-      home: HomeScreen(),
+      home: LoginScreen(),
     );
   }
 }
