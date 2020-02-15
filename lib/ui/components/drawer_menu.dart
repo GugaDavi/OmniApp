@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:omni_app/routes/route_consts.dart';
+import 'package:omni_app/ui/screens/drawer_menu_screens/new_dev_screens/new_dev.dart';
 import 'package:omni_app/ui/styles/colors.dart';
 
 class DrawerMenu extends StatelessWidget {
@@ -9,7 +10,12 @@ class DrawerMenu extends StatelessWidget {
         semanticLabel: 'Menu',
         child: Container(
           padding: EdgeInsets.only(top: 100, right: 20, bottom: 20, left: 10),
-          color: secondColor,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: <Color>[secondColor, Colors.white]),
+          ),
           child: Flex(
             direction: Axis.vertical,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -24,16 +30,27 @@ class DrawerMenu extends StatelessWidget {
               _createDrawerItem(
                   context: context,
                   icon: Icons.person_add,
-                  text: 'Cadastrar Novos Devs',
+                  text: 'Novo DEV',
                   onTap: () {
-                    // Navigator.of(context).pushNamed('');
+                    showDialog<NewDev>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return NewDev();
+                        });
+                  }),
+              _createDrawerItem(
+                  context: context,
+                  icon: Icons.list,
+                  text: 'Lista de Devs',
+                  onTap: () {
+                    Navigator.of(context).pushNamed(devsList);
                   }),
               _createDrawerItem(
                   context: context,
                   icon: Icons.subdirectory_arrow_left,
                   text: 'Sair',
                   onTap: () {
-                    // Navigator.of(context).pushNamed('');
+                    Navigator.of(context).pushReplacementNamed(login);
                   })
             ],
           ),
