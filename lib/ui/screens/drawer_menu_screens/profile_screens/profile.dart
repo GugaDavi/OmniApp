@@ -30,11 +30,11 @@ class ProfileScreen extends StatelessWidget {
                   children: <Widget>[
                     ClipRRect(
                       borderRadius: BorderRadius.circular(
-                          responsive.sizeCalc(25, SizeDimension.height)),
+                          responsive.sizeCalc(20, SizeDimension.height)),
                       child: Image.network(
                         'https://avatars2.githubusercontent.com/u/2254731?v=4',
-                        height: responsive.sizeCalc(25, SizeDimension.height),
-                        width: responsive.sizeCalc(25, SizeDimension.height),
+                        height: responsive.sizeCalc(20, SizeDimension.height),
+                        width: responsive.sizeCalc(20, SizeDimension.height),
                       ),
                     ),
                     SizedBox(

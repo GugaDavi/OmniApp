@@ -63,7 +63,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                     SizedBox(
                       height: isVisibleKeyboard
-                          ? responsive.sizeCalc(15, SizeDimension.height)
+                          ? responsive.sizeCalc(25, SizeDimension.height)
                           : 0,
                     )
                   ],

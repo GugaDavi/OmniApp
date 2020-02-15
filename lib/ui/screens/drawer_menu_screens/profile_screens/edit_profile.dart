@@ -17,25 +17,37 @@ class EditProfile extends StatelessWidget {
         title: Text('Editar Perfil'),
         centerTitle: true,
       ),
-      body: Container(
-        padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          gradient:
-              LinearGradient(colors: <Color>[primaryColor, primaryDarkColor]),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Input(labelName: 'Name', controller: _nameController),
-            Input(labelName: 'Bio', controller: _bioController),
-            Input(labelName: 'Latitude', controller: _latitudeController),
-            Input(labelName: 'Longitude', controller: _longitudeController),
-            Button(
-              child: 'Editar',
-            )
-          ],
-        ),
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Container(
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: <Color>[primaryColor, primaryDarkColor]),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Input(labelName: 'Name', controller: _nameController),
+                    Input(labelName: 'Bio', controller: _bioController),
+                    Input(
+                        labelName: 'Latitude', controller: _latitudeController),
+                    Input(
+                        labelName: 'Longitude',
+                        controller: _longitudeController),
+                    Button(
+                      child: 'Editar',
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
