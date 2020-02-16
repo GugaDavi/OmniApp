@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:omni_app/api/api.dart';
 import 'package:omni_app/routes/route_generator.dart';
 import 'package:omni_app/stores/login_store/login_store.dart';
+import 'package:omni_app/stores/profile_store/profile_store.dart';
 import 'package:omni_app/ui/screens/verifyLogin.dart';
 import 'package:provider/provider.dart';
 
@@ -12,6 +13,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        Provider<ProfileStore>(
+          create: (_) => ProfileStore(),
+        ),
         Provider<LoginStore>(
           create: (_) => LoginStore(Api()),
         ),

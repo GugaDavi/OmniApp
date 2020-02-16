@@ -54,6 +54,16 @@ mixin _$LoginStore on _LoginStoreBase, Store {
       ActionController(name: '_LoginStoreBase');
 
   @override
+  void logOut() {
+    final _$actionInfo = _$_LoginStoreBaseActionController.startAction();
+    try {
+      return super.logOut();
+    } finally {
+      _$_LoginStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setDev(DevModel dev) {
     final _$actionInfo = _$_LoginStoreBaseActionController.startAction();
     try {

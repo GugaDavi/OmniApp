@@ -66,9 +66,23 @@ class Api {
   Future<DevModel> addDev(DevModel dev) async {
     final Map<String, String> header = {'Content-Type': 'application/json'};
     try {
-      print(dev.toJson());
       http.Response data = await http.post('$baseURL/devs',
           body: JsonCodec().encode(dev.toJson()), headers: header);
+
+      const JsonDecoder decoder = const JsonDecoder();
+      Map<String, dynamic> json = decoder.convert(data.body);
+      return DevModel.fromJson(json);
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  Future<DevModel> updateDev(String id, Map<String, String> newDada) async {
+    final Map<String, String> header = {'Content-Type': 'application/json'};
+    try {
+      http.Response data = await http.put('$baseURL/devs/$id',
+          body: JsonCodec().encode(newDada), headers: header);
 
       const JsonDecoder decoder = const JsonDecoder();
       Map<String, dynamic> json = decoder.convert(data.body);

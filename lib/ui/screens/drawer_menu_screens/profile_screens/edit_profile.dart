@@ -1,25 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:omni_app/models/dev_model.dart';
-import 'package:omni_app/stores/login_store/login_store.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:omni_app/stores/profile_store/profile_store.dart';
 import 'package:omni_app/ui/components/button.dart';
 import 'package:omni_app/ui/components/input.dart';
 import 'package:omni_app/ui/styles/colors.dart';
 import 'package:provider/provider.dart';
 
 class EditProfile extends StatelessWidget {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _bioController = TextEditingController();
-  final TextEditingController _latitudeController = TextEditingController();
-  final TextEditingController _longitudeController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
-    LoginStore loginStore = Provider.of<LoginStore>(context);
-    DevModel dev = loginStore.userDev;
-    _nameController.text = dev.name;
-    _bioController.text = dev.bio;
-    _latitudeController.text = dev.location.latitude.toString();
-    _longitudeController.text = dev.location.longitude.toString();
+    ProfileStore profileStore = Provider.of<ProfileStore>(context);
+    profileStore.editProfile.setProps(profileStore.userDev);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryDarkColor,
@@ -41,15 +32,43 @@ class EditProfile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    Input(labelName: 'Name', controller: _nameController),
-                    Input(labelName: 'Bio', controller: _bioController),
                     Input(
-                        labelName: 'Latitude', controller: _latitudeController),
+                      labelName: 'Name',
+                      initValue: profileStore.editProfile.name,
+                      onChanged: profileStore.editProfile.setName,
+                    ),
                     Input(
-                        labelName: 'Longitude',
-                        controller: _longitudeController),
-                    Button(
-                      child: 'Editar',
+                      labelName: 'Bio',
+                      initValue: profileStore.editProfile.bio,
+                      onChanged: profileStore.editProfile.setBio,
+                    ),
+                    Input(
+                      labelName: 'Techs',
+                      initValue: profileStore.editProfile.techs,
+                      onChanged: profileStore.editProfile.setTechs,
+                    ),
+                    Input(
+                      labelName: 'Latitude',
+                      initValue: profileStore.editProfile.latitude,
+                      onChanged: profileStore.editProfile.setLatitude,
+                    ),
+                    Input(
+                      labelName: 'Longitude',
+                      initValue: profileStore.editProfile.longitude,
+                      onChanged: profileStore.editProfile.setLongitude,
+                    ),
+                    Observer(
+                      builder: (_) {
+                        return Button(
+                          child: 'Editar',
+                          onPressed: profileStore.editProfile.validate
+                              ? () {
+                                  profileStore.updateProfile();
+                                  Navigator.pop(context);
+                                }
+                              : null,
+                        );
+                      },
                     )
                   ],
                 ),

@@ -9,21 +9,45 @@ part of 'profile_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$ProfileStore on _ProfileStoreBase, Store {
-  final _$devAtom = Atom(name: '_ProfileStoreBase.dev');
+  final _$userDevAtom = Atom(name: '_ProfileStoreBase.userDev');
 
   @override
-  DevModel get dev {
-    _$devAtom.context.enforceReadPolicy(_$devAtom);
-    _$devAtom.reportObserved();
-    return super.dev;
+  DevModel get userDev {
+    _$userDevAtom.context.enforceReadPolicy(_$userDevAtom);
+    _$userDevAtom.reportObserved();
+    return super.userDev;
   }
 
   @override
-  set dev(DevModel value) {
-    _$devAtom.context.conditionallyRunInAction(() {
-      super.dev = value;
-      _$devAtom.reportChanged();
-    }, _$devAtom, name: '${_$devAtom.name}_set');
+  set userDev(DevModel value) {
+    _$userDevAtom.context.conditionallyRunInAction(() {
+      super.userDev = value;
+      _$userDevAtom.reportChanged();
+    }, _$userDevAtom, name: '${_$userDevAtom.name}_set');
+  }
+
+  final _$editProfileAtom = Atom(name: '_ProfileStoreBase.editProfile');
+
+  @override
+  EditProfile get editProfile {
+    _$editProfileAtom.context.enforceReadPolicy(_$editProfileAtom);
+    _$editProfileAtom.reportObserved();
+    return super.editProfile;
+  }
+
+  @override
+  set editProfile(EditProfile value) {
+    _$editProfileAtom.context.conditionallyRunInAction(() {
+      super.editProfile = value;
+      _$editProfileAtom.reportChanged();
+    }, _$editProfileAtom, name: '${_$editProfileAtom.name}_set');
+  }
+
+  final _$updateProfileAsyncAction = AsyncAction('updateProfile');
+
+  @override
+  Future<void> updateProfile() {
+    return _$updateProfileAsyncAction.run(() => super.updateProfile());
   }
 
   final _$_ProfileStoreBaseActionController =

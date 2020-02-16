@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:omni_app/models/dev_model.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:omni_app/routes/route_consts.dart';
-import 'package:omni_app/stores/login_store/login_store.dart';
+import 'package:omni_app/stores/profile_store/profile_store.dart';
 import 'package:omni_app/ui/styles/colors.dart';
 import 'package:omni_app/ui/styles/responsive_widget.dart';
 import 'package:provider/provider.dart';
@@ -9,8 +9,7 @@ import 'package:provider/provider.dart';
 class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    LoginStore loginStore = Provider.of<LoginStore>(context);
-    DevModel dev = loginStore.userDev;
+    ProfileStore profileStore = Provider.of<ProfileStore>(context);
 
     double heightScreen = MediaQuery.of(context).size.height;
     double widthScreen = MediaQuery.of(context).size.width;
@@ -38,7 +37,7 @@ class ProfileScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(
                           responsive.sizeCalc(20, SizeDimension.height)),
                       child: Image.network(
-                        dev.avatarUrl,
+                        profileStore.userDev.avatarUrl,
                         height: responsive.sizeCalc(20, SizeDimension.height),
                         width: responsive.sizeCalc(20, SizeDimension.height),
                       ),
@@ -46,40 +45,56 @@ class ProfileScreen extends StatelessWidget {
                     SizedBox(
                       height: 20,
                     ),
-                    Text(
-                      dev.name,
-                      style: TextStyle(color: Colors.black, fontSize: 26),
+                    Observer(
+                      builder: (_) {
+                        return Text(
+                          profileStore.userDev.name,
+                          style: TextStyle(color: Colors.black, fontSize: 26),
+                        );
+                      },
                     ),
                     SizedBox(
                       height: 10,
                     ),
-                    Text(
-                      dev.techs.join(', '),
-                      style: TextStyle(color: Colors.grey, fontSize: 18),
+                    Observer(
+                      builder: (_) {
+                        return Text(
+                          profileStore.userDev.techs.join(', '),
+                          style: TextStyle(color: Colors.grey, fontSize: 18),
+                        );
+                      },
                     ),
                     SizedBox(
                       height: 10,
                     ),
-                    Text(
-                      dev.bio,
-                      style: TextStyle(color: Colors.grey, fontSize: 18),
-                      textAlign: TextAlign.center,
+                    Observer(
+                      builder: (_) {
+                        return Text(
+                          profileStore.userDev.bio,
+                          style: TextStyle(color: Colors.grey, fontSize: 18),
+                          textAlign: TextAlign.center,
+                        );
+                      },
                     ),
                     SizedBox(
                       height: 10,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        Text(
-                          dev.location.latitude.toString(),
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Text(
-                          dev.location.longitude.toString(),
-                          style: TextStyle(fontSize: 16),
-                        )
-                      ],
+                    Observer(
+                      builder: (_) {
+                        return Wrap(
+                          alignment: WrapAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              'Latitude: ${profileStore.userDev.location.latitude.toString()}',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            Text(
+                              'Longitude: ${profileStore.userDev.location.longitude.toString()}',
+                              style: TextStyle(fontSize: 16),
+                            )
+                          ],
+                        );
+                      },
                     ),
                     SizedBox(
                       height: 30,

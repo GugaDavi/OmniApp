@@ -17,6 +17,12 @@ abstract class _LoginStoreBase with Store {
   DevModel userDev;
 
   @action
+  void logOut() {
+    authenticated = false;
+    userDev = null;
+  }
+
+  @action
   void setDev(DevModel dev) => userDev = dev;
 
   @action
