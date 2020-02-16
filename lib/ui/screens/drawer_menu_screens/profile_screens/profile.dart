@@ -77,16 +77,18 @@ class ProfileScreen extends StatelessWidget {
                       },
                     ),
                     SizedBox(
-                      height: 10,
+                      height: 20,
                     ),
                     Observer(
                       builder: (_) {
-                        return Wrap(
-                          alignment: WrapAlignment.center,
+                        return Column(
                           children: <Widget>[
                             Text(
                               'Latitude: ${profileStore.userDev.location.latitude.toString()}',
                               style: TextStyle(fontSize: 16),
+                            ),
+                            SizedBox(
+                              height: 5,
                             ),
                             Text(
                               'Longitude: ${profileStore.userDev.location.longitude.toString()}',
