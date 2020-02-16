@@ -48,7 +48,7 @@ class Api {
     }
   }
 
-  Future<void> deleteDev(String id) async {
+  Future<bool> deleteDev(String id) async {
     try {
       http.Response data = await http.delete('$baseURL/devs/$id');
 
@@ -56,10 +56,10 @@ class Api {
       if (json['message'] != null) {
         print(json['message']);
       }
-      return;
+      return true;
     } catch (e) {
       print(e);
-      return;
+      return false;
     }
   }
 
