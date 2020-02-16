@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:omni_app/models/dev_model.dart';
+import 'package:omni_app/routes/route_consts.dart';
+import 'package:omni_app/stores/dev_list_store/dev_list_store.dart';
+import 'package:omni_app/stores/new_dev_store/new_dev_store.dart';
 import 'package:omni_app/ui/components/button.dart';
 import 'package:omni_app/ui/components/input.dart';
 import 'package:omni_app/ui/styles/colors.dart';
+import 'package:provider/provider.dart';
 
 class NewDev extends StatelessWidget {
-  TextEditingController _userNameController = TextEditingController();
-  TextEditingController _techsController = TextEditingController();
-  TextEditingController _latitudeController = TextEditingController();
-  TextEditingController _longitudeController = TextEditingController();
+  NewDevStore newDevStore = NewDevStore();
 
   @override
   Widget build(BuildContext context) {
+    DevListStore devListStore = Provider.of<DevListStore>(context);
     bool isVisibleKeyboard = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return Container(
@@ -48,15 +51,15 @@ class NewDev extends StatelessWidget {
                           fontWeight: FontWeight.bold),
                     ),
                   ),
-                  _buildInput('GitHub Username', _userNameController),
-                  _buildInput('Techs', _techsController),
-                  _buildInput('Latitude', _latitudeController),
-                  _buildInput('Longitude', _longitudeController),
+                  _buildInput(
+                      'GitHub Username', newDevStore.form.setGithubUserName),
+                  _buildInput('Techs', newDevStore.form.setTechs),
+                  _buildInput('Latitude', newDevStore.form.setLatitude),
+                  _buildInput('Longitude', newDevStore.form.setLongitude),
                   Button(
-                    color: secondColor,
-                    child: 'Adicionar',
-                    onPressed: () => Navigator.pop(context),
-                  )
+                      color: secondColor,
+                      child: 'Adicionar',
+                      onPressed: () => addDev(context, devListStore))
                 ],
               ),
             ),
@@ -66,12 +69,18 @@ class NewDev extends StatelessWidget {
     );
   }
 
-  Widget _buildInput(String label, TextEditingController controller) {
+  void addDev(BuildContext context, DevListStore devListStore) async {
+    DevModel dev = await newDevStore.addDev();
+    devListStore.addDev(dev);
+    Navigator.popAndPushNamed(context, devsList);
+  }
+
+  Widget _buildInput(String label, Function onChanged) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
       child: Input(
         labelName: label,
-        controller: controller,
+        onChanged: onChanged,
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:omni_app/api/api.dart';
 import 'package:omni_app/routes/route_generator.dart';
+import 'package:omni_app/stores/dev_list_store/dev_list_store.dart';
 import 'package:omni_app/stores/login_store/login_store.dart';
 import 'package:omni_app/stores/profile_store/profile_store.dart';
 import 'package:omni_app/ui/screens/verifyLogin.dart';
@@ -15,6 +16,9 @@ class MyApp extends StatelessWidget {
       providers: [
         Provider<ProfileStore>(
           create: (_) => ProfileStore(),
+        ),
+        Provider<DevListStore>(
+          create: (_) => DevListStore(),
         ),
         Provider<LoginStore>(
           create: (_) => LoginStore(Api()),

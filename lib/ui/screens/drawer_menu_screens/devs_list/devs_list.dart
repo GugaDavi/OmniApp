@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:omni_app/models/dev_model.dart';
-import 'package:omni_app/stores/dev_list_store/controllers/dev_card_controller.dart';
 import 'package:omni_app/stores/dev_list_store/dev_list_store.dart';
 import 'package:omni_app/ui/screens/drawer_menu_screens/devs_list/card_icon.dart';
 import 'package:omni_app/ui/styles/colors.dart';
+import 'package:provider/provider.dart';
 
 class DevList extends StatelessWidget {
-  DevListStore devListStore = DevListStore();
+  DevListStore devListStore;
 
   @override
   Widget build(BuildContext context) {
     double widthScreenSize = MediaQuery.of(context).size.width;
+    devListStore = Provider.of<DevListStore>(context);
     devListStore.listerDevs();
 
     return Scaffold(

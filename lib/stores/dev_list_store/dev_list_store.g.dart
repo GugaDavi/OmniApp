@@ -40,6 +40,13 @@ mixin _$DevListStore on _DevListStoreBase, Store {
     return _$deleteDevAsyncAction.run(() => super.deleteDev(id));
   }
 
+  final _$addDevAsyncAction = AsyncAction('addDev');
+
+  @override
+  Future<void> addDev(DevModel dev) {
+    return _$addDevAsyncAction.run(() => super.addDev(dev));
+  }
+
   final _$_DevListStoreBaseActionController =
       ActionController(name: '_DevListStoreBase');
 

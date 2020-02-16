@@ -42,4 +42,12 @@ abstract class _DevListStoreBase with Store {
       setDevs(updatedDevs);
     }
   }
+
+  @action
+  Future<void> addDev(DevModel dev) async {
+    List<DevModel> _list = devs?.devs ?? <DevModel>[];
+    _list.add(dev);
+    DevsModel updatedDevs = DevsModel(devs: _list);
+    setDevs(updatedDevs);
+  }
 }
