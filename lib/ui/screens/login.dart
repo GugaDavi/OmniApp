@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:omni_app/routes/route_consts.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:omni_app/stores/login_store/controllers/login_controller.dart';
+import 'package:omni_app/stores/login_store/login_store.dart';
+import 'package:omni_app/stores/profile_store/profile_store.dart';
 import 'package:omni_app/ui/components/button.dart';
 import 'package:omni_app/ui/styles/colors.dart';
 import 'package:omni_app/ui/styles/responsive_widget.dart';
 import 'package:omni_app/ui/styles/styles.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    LoginControlller loginControlller = LoginControlller();
+    LoginStore loginStore = Provider.of<LoginStore>(context);
+    ProfileStore profileStore = ProfileStore();
     bool isVisibleKeyboard = MediaQuery.of(context).viewInsets.bottom > 0;
     double heightScreen = MediaQuery.of(context).size.height;
     double widthScreen = MediaQuery.of(context).size.width;
@@ -41,10 +48,10 @@ class LoginScreen extends StatelessWidget {
                       height: 20,
                     ),
                     TextField(
+                        onChanged: loginControlller.setGithubUserName,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 22,
-                          fontFamily: 'Roboto',
                         ),
                         decoration: inputStyle(
                             labelText: 'GitHub User',
@@ -57,9 +64,18 @@ class LoginScreen extends StatelessWidget {
                     SizedBox(
                       height: 20,
                     ),
-                    Button(
-                      child: 'Entrar',
-                      onPressed: () => Navigator.of(context).pushNamed(home),
+                    Observer(
+                      builder: (_) {
+                        return Button(
+                          child: 'Entrar',
+                          onPressed: loginControlller.validValue
+                              ? () {
+                                  loginStore
+                                      .login(loginControlller.githubUserName);
+                                }
+                              : null,
+                        );
+                      },
                     ),
                     SizedBox(
                       height: isVisibleKeyboard

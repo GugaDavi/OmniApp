@@ -7,11 +7,15 @@ import 'package:omni_app/models/devs_model.dart';
 class Api {
   static String baseURL = 'http://localhost:3333';
 
-  Future<DevModel> getDev(String id) async {
+  Future<DevModel> getDev(String githubUsername) async {
     try {
-      http.Response data = await http.get('$baseURL/devs/$id');
+      http.Response data = await http.get('$baseURL/devs/$githubUsername');
 
       Map<String, dynamic> json = JsonDecoder().convert(data.body);
+      if (json['message'] != null) {
+        print(json['message']);
+        return null;
+      }
       return DevModel.fromJson(json);
     } catch (e) {
       print(e);
