@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:omni_app/routes/route_consts.dart';
+import 'package:omni_app/stores/login_store/login_store.dart';
 import 'package:omni_app/ui/screens/drawer_menu_screens/new_dev_screens/new_dev.dart';
 import 'package:omni_app/ui/styles/colors.dart';
+import 'package:provider/provider.dart';
 
 class DrawerMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    LoginStore loginStore = Provider.of<LoginStore>(context);
     return Drawer(
         semanticLabel: 'Menu',
         child: Container(
@@ -49,9 +52,7 @@ class DrawerMenu extends StatelessWidget {
                   context: context,
                   icon: Icons.subdirectory_arrow_left,
                   text: 'Sair',
-                  onTap: () {
-                    Navigator.of(context).pushReplacementNamed(login);
-                  })
+                  onTap: () => loginStore.logOut())
             ],
           ),
         ));

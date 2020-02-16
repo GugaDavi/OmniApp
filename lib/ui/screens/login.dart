@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:omni_app/models/dev_model.dart';
 import 'package:omni_app/stores/login_store/controllers/login_controller.dart';
 import 'package:omni_app/stores/login_store/login_store.dart';
 import 'package:omni_app/stores/profile_store/profile_store.dart';
@@ -14,11 +15,17 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     LoginControlller loginControlller = LoginControlller();
     LoginStore loginStore = Provider.of<LoginStore>(context);
-    ProfileStore profileStore = ProfileStore();
+    ProfileStore profileStore = Provider.of<ProfileStore>(context);
     bool isVisibleKeyboard = MediaQuery.of(context).viewInsets.bottom > 0;
     double heightScreen = MediaQuery.of(context).size.height;
     double widthScreen = MediaQuery.of(context).size.width;
     ResponsiveWidget responsive = ResponsiveWidget(heightScreen, widthScreen);
+
+    void _login() async {
+      DevModel dev = await loginStore.login(loginControlller.githubUserName);
+      print(dev);
+      profileStore.setDev(dev);
+    }
 
     return Material(
       child: LayoutBuilder(
@@ -68,12 +75,8 @@ class LoginScreen extends StatelessWidget {
                       builder: (_) {
                         return Button(
                           child: 'Entrar',
-                          onPressed: loginControlller.validValue
-                              ? () {
-                                  loginStore
-                                      .login(loginControlller.githubUserName);
-                                }
-                              : null,
+                          onPressed:
+                              loginControlller.validValue ? _login : null,
                         );
                       },
                     ),
