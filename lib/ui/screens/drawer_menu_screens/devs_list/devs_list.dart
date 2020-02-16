@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:omni_app/models/dev_model.dart';
 import 'package:omni_app/stores/dev_list_store/controllers/dev_card_controller.dart';
 import 'package:omni_app/stores/dev_list_store/dev_list_store.dart';
+import 'package:omni_app/ui/screens/drawer_menu_screens/devs_list/card_icon.dart';
 import 'package:omni_app/ui/styles/colors.dart';
 
 class DevList extends StatelessWidget {
@@ -98,66 +99,10 @@ class DevList extends StatelessWidget {
           Positioned(
             top: 0,
             right: 0,
-            child: _icons(dev),
+            child: CardIcon(devListStore: devListStore, dev: dev),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _icons(DevModel dev) {
-    DevCardController devCardController = DevCardController(dev);
-
-    return Observer(
-      builder: (_) {
-        if (devCardController.confirmDelete &&
-            dev.id == devCardController.dev.id) {
-          return Row(
-            children: <Widget>[
-              IconButton(
-                onPressed: () => devListStore.deleteDev(dev.id),
-                alignment: Alignment.centerRight,
-                padding: EdgeInsets.all(0),
-                icon: Icon(
-                  Icons.delete_forever,
-                  size: 28,
-                  color: Colors.red,
-                ),
-              ),
-              IconButton(
-                onPressed: devCardController.setConfirmDelete,
-                icon: Icon(
-                  Icons.clear,
-                  size: 28,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          );
-        }
-        return Row(
-          children: <Widget>[
-            IconButton(
-              onPressed: devCardController.setConfirmDelete,
-              alignment: Alignment.centerRight,
-              padding: EdgeInsets.all(0),
-              icon: Icon(
-                Icons.delete_outline,
-                size: 28,
-                color: Colors.red,
-              ),
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.open_in_new,
-                size: 28,
-                color: Colors.black,
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 }
