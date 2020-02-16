@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:omni_app/models/dev_model.dart';
 import 'package:omni_app/routes/route_consts.dart';
+import 'package:omni_app/stores/login_store/login_store.dart';
 import 'package:omni_app/ui/styles/colors.dart';
 import 'package:omni_app/ui/styles/responsive_widget.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    LoginStore loginStore = Provider.of<LoginStore>(context);
+    DevModel dev = loginStore.userDev;
+
     double heightScreen = MediaQuery.of(context).size.height;
     double widthScreen = MediaQuery.of(context).size.width;
     ResponsiveWidget responsive = ResponsiveWidget(heightScreen, widthScreen);
@@ -32,7 +38,7 @@ class ProfileScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(
                           responsive.sizeCalc(20, SizeDimension.height)),
                       child: Image.network(
-                        'https://avatars2.githubusercontent.com/u/2254731?v=4',
+                        dev.avatarUrl,
                         height: responsive.sizeCalc(20, SizeDimension.height),
                         width: responsive.sizeCalc(20, SizeDimension.height),
                       ),
@@ -41,21 +47,21 @@ class ProfileScreen extends StatelessWidget {
                       height: 20,
                     ),
                     Text(
-                      'Diego Fernandes',
+                      dev.name,
                       style: TextStyle(color: Colors.black, fontSize: 26),
                     ),
                     SizedBox(
                       height: 10,
                     ),
                     Text(
-                      'React, React Native, Node',
+                      dev.techs.join(', '),
                       style: TextStyle(color: Colors.grey, fontSize: 18),
                     ),
                     SizedBox(
                       height: 10,
                     ),
                     Text(
-                      'CTO na @Rocketseat. Apaixonado pelas melhores tecnologias de desenvolvimento web e mobile.',
+                      dev.bio,
                       style: TextStyle(color: Colors.grey, fontSize: 18),
                       textAlign: TextAlign.center,
                     ),
@@ -66,11 +72,11 @@ class ProfileScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
                         Text(
-                          'Latitude: -46.641152',
+                          dev.location.latitude.toString(),
                           style: TextStyle(fontSize: 16),
                         ),
                         Text(
-                          'Latitude: -23.6404736',
+                          dev.location.longitude.toString(),
                           style: TextStyle(fontSize: 16),
                         )
                       ],

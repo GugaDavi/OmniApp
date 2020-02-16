@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:omni_app/models/dev_model.dart';
+import 'package:omni_app/stores/login_store/login_store.dart';
 import 'package:omni_app/ui/components/button.dart';
 import 'package:omni_app/ui/components/input.dart';
 import 'package:omni_app/ui/styles/colors.dart';
+import 'package:provider/provider.dart';
 
 class EditProfile extends StatelessWidget {
   final TextEditingController _nameController = TextEditingController();
@@ -11,6 +14,12 @@ class EditProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LoginStore loginStore = Provider.of<LoginStore>(context);
+    DevModel dev = loginStore.userDev;
+    _nameController.text = dev.name;
+    _bioController.text = dev.bio;
+    _latitudeController.text = dev.location.latitude.toString();
+    _longitudeController.text = dev.location.longitude.toString();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryDarkColor,
