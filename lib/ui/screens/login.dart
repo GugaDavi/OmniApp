@@ -10,12 +10,29 @@ import 'package:omni_app/ui/styles/responsive_widget.dart';
 import 'package:omni_app/ui/styles/styles.dart';
 import 'package:provider/provider.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  LoginControlller loginControlller;
+  LoginStore loginStore;
+  ProfileStore profileStore;
+  bool builded = false;
+
+  void initStates() {
+    if (!builded) {
+      loginControlller = LoginControlller();
+      loginStore = Provider.of<LoginStore>(context);
+      profileStore = Provider.of<ProfileStore>(context);
+    }
+    builded = true;
+  }
+
   @override
   Widget build(BuildContext context) {
-    LoginControlller loginControlller = LoginControlller();
-    LoginStore loginStore = Provider.of<LoginStore>(context);
-    ProfileStore profileStore = Provider.of<ProfileStore>(context);
+    initStates();
     bool isVisibleKeyboard = MediaQuery.of(context).viewInsets.bottom > 0;
     double heightScreen = MediaQuery.of(context).size.height;
     double widthScreen = MediaQuery.of(context).size.width;
@@ -23,7 +40,6 @@ class LoginScreen extends StatelessWidget {
 
     void _login() async {
       DevModel dev = await loginStore.login(loginControlller.githubUserName);
-      print(dev);
       profileStore.setDev(dev);
     }
 

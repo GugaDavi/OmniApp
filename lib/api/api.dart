@@ -35,7 +35,8 @@ class Api {
     }
   }
 
-  Future<DevsModel> search(num latitude, num longitude, String techs) async {
+  Future<DevsModel> search(
+      String latitude, String longitude, String techs) async {
     try {
       http.Response data = await http.get(
           '$baseURL/search?latitude=$latitude&longitude=$longitude&techs=$techs');

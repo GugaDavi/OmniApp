@@ -17,7 +17,7 @@ class DrawerMenu extends StatelessWidget {
             gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: <Color>[secondColor, Colors.white]),
+                colors: <Color>[primaryColor, Colors.white]),
           ),
           child: Flex(
             direction: Axis.vertical,
