@@ -9,6 +9,7 @@ import 'package:omni_app/ui/components/drawer_menu.dart';
 import 'package:omni_app/ui/styles/colors.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -18,24 +19,28 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   ProfileStore profileStore;
   Completer<GoogleMapController> _controller;
+  FocusNode _inputFocus = FocusNode();
   HomeStore homeStore;
   DevModel refDev;
   bool builded = false;
+  Set<Marker> mrks = <Marker>{};
 
-  @override
-  void didChangeDependencies() {
-    profileStore = Provider.of<ProfileStore>(context);
-    refDev = profileStore.userDev;
-    homeStore = HomeStore();
-    homeStore.setCoordinates(profileStore.userDev.location);
-    homeStore.listerDevs(refDev.techs.first);
-    _controller = Completer();
-    print(homeStore.loadedMrks);
-    super.didChangeDependencies();
+  void startState() {
+    if (!builded) {
+      profileStore = Provider.of<ProfileStore>(context);
+      refDev = profileStore.userDev;
+      homeStore = HomeStore();
+      homeStore.setCoordinates(profileStore.userDev.location);
+      homeStore.listerDevs(profileStore.userDev.techs.first);
+      _controller = Completer();
+    }
+    builded = true;
   }
 
   @override
   Widget build(BuildContext context) {
+    startState();
+    double widthScreenSize = MediaQuery.of(context).size.width;
     return Scaffold(
         drawer: DrawerMenu(),
         backgroundColor: Colors.black,
@@ -47,31 +52,32 @@ class _HomeScreenState extends State<HomeScreen> {
         body: Stack(children: <Widget>[
           Observer(
             builder: (_) {
-              if (homeStore.loadedMrks) {
-                return Container(
-                  height: double.infinity,
-                  width: double.infinity,
-                  child: GoogleMap(
-                    markers: homeStore.mrks,
-                    myLocationButtonEnabled: false,
-                    initialCameraPosition: CameraPosition(
-                        zoom: 12,
-                        target: LatLng(profileStore.userDev.location.latitude,
-                            profileStore.userDev.location.longitude)),
-                    onMapCreated: (GoogleMapController controller) {
-                      _controller.complete(controller);
-                    },
-                  ),
-                );
+              if (homeStore.loadedDevs) {
+                homeStore.devs.devs.forEach((DevModel dev) {
+                  mrks.add(Marker(
+                    markerId: MarkerId(dev.id),
+                    position:
+                        LatLng(dev.location.latitude, dev.location.longitude),
+                    icon: BitmapDescriptor.defaultMarkerWithHue(
+                        BitmapDescriptor.hueGreen),
+                    onTap: () => homeStore.setTapedDev(dev),
+                  ));
+                });
               }
               return Container(
                 height: double.infinity,
                 width: double.infinity,
-                color: Colors.white,
-                child: Container(
-                  height: double.infinity,
-                  width: double.infinity,
-                  color: primaryColor.withOpacity(0.1),
+                child: GoogleMap(
+                  markers: mrks,
+                  onTap: (LatLng ltLg) => homeStore.setTapedDev(null),
+                  myLocationButtonEnabled: false,
+                  initialCameraPosition: CameraPosition(
+                      zoom: 13,
+                      target: LatLng(profileStore.userDev.location.latitude,
+                          profileStore.userDev.location.longitude)),
+                  onMapCreated: (GoogleMapController controller) {
+                    _controller.complete(controller);
+                  },
                 ),
               );
             },
@@ -87,6 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: Colors.white.withOpacity(0.7),
                       borderRadius: BorderRadius.circular(45)),
                   child: TextFormField(
+                    focusNode: _inputFocus,
                     initialValue: refDev.techs.first,
                     onChanged: homeStore.findDev.setTechs,
                     style: TextStyle(
@@ -109,15 +116,99 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Icon(Icons.search,
                           color: Colors.white, semanticLabel: 'Search'),
                       onPressed: homeStore.findDev.techsIsNotEmpty
-                          ? () => homeStore.listerDevs(homeStore.findDev.techs)
+                          ? () {
+                              mrks.clear();
+                              homeStore.listerDevs(homeStore.findDev.techs);
+                              _inputFocus.unfocus();
+                            }
                           : null,
                     );
                   },
                 ),
               ],
             ),
+          ),
+          Positioned(
+            bottom: 30,
+            right: 16,
+            left: 16,
+            child: Observer(
+              builder: (_) {
+                if (homeStore.tapedDev != null) {
+                  return GestureDetector(
+                    onTap: () => goToGihub(homeStore.tapedDev.githubUsername),
+                    child: Container(
+                      padding: EdgeInsets.all(16),
+                      height: 110,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(
+                                color: Colors.black.withOpacity(0.7),
+                                offset: Offset.fromDirection(10, -3),
+                                blurRadius: 7)
+                          ],
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(75.0),
+                                child: Image.network(
+                                  homeStore.tapedDev.avatarUrl,
+                                  height: 75,
+                                  width: 75,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 16,
+                              ),
+                              Container(
+                                width: widthScreenSize * 60 / 100,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      homeStore.tapedDev.name,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    Text(
+                                      homeStore.tapedDev.techs.join(', '),
+                                      style: TextStyle(
+                                          color: primaryDarkColor,
+                                          fontSize: 18),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                return Container();
+              },
+            ),
           )
         ]));
+  }
+
+  void goToGihub(String githubUser) async {
+    String baseURL = 'https://github.com/$githubUser';
+    if (await canLaunch(baseURL)) {
+      await launch(baseURL);
+    } else {
+      throw 'Could not launch $baseURL';
+    }
   }
 
   InputDecoration _styleInput() {

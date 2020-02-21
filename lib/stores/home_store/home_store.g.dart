@@ -9,12 +9,6 @@ part of 'home_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$HomeStore on _HomeStoreBase, Store {
-  Computed<bool> _$loadedMrksComputed;
-
-  @override
-  bool get loadedMrks =>
-      (_$loadedMrksComputed ??= Computed<bool>(() => super.loadedMrks)).value;
-
   final _$findDevAtom = Atom(name: '_HomeStoreBase.findDev');
 
   @override
@@ -66,21 +60,38 @@ mixin _$HomeStore on _HomeStoreBase, Store {
     }, _$devsAtom, name: '${_$devsAtom.name}_set');
   }
 
-  final _$mrksAtom = Atom(name: '_HomeStoreBase.mrks');
+  final _$tapedDevAtom = Atom(name: '_HomeStoreBase.tapedDev');
 
   @override
-  ObservableSet<Marker> get mrks {
-    _$mrksAtom.context.enforceReadPolicy(_$mrksAtom);
-    _$mrksAtom.reportObserved();
-    return super.mrks;
+  DevModel get tapedDev {
+    _$tapedDevAtom.context.enforceReadPolicy(_$tapedDevAtom);
+    _$tapedDevAtom.reportObserved();
+    return super.tapedDev;
   }
 
   @override
-  set mrks(ObservableSet<Marker> value) {
-    _$mrksAtom.context.conditionallyRunInAction(() {
-      super.mrks = value;
-      _$mrksAtom.reportChanged();
-    }, _$mrksAtom, name: '${_$mrksAtom.name}_set');
+  set tapedDev(DevModel value) {
+    _$tapedDevAtom.context.conditionallyRunInAction(() {
+      super.tapedDev = value;
+      _$tapedDevAtom.reportChanged();
+    }, _$tapedDevAtom, name: '${_$tapedDevAtom.name}_set');
+  }
+
+  final _$loadedDevsAtom = Atom(name: '_HomeStoreBase.loadedDevs');
+
+  @override
+  bool get loadedDevs {
+    _$loadedDevsAtom.context.enforceReadPolicy(_$loadedDevsAtom);
+    _$loadedDevsAtom.reportObserved();
+    return super.loadedDevs;
+  }
+
+  @override
+  set loadedDevs(bool value) {
+    _$loadedDevsAtom.context.conditionallyRunInAction(() {
+      super.loadedDevs = value;
+      _$loadedDevsAtom.reportChanged();
+    }, _$loadedDevsAtom, name: '${_$loadedDevsAtom.name}_set');
   }
 
   final _$listerDevsAsyncAction = AsyncAction('listerDevs');
@@ -114,20 +125,20 @@ mixin _$HomeStore on _HomeStoreBase, Store {
   }
 
   @override
-  void addMrk(Marker mk) {
+  void setTapedDev(DevModel dev) {
     final _$actionInfo = _$_HomeStoreBaseActionController.startAction();
     try {
-      return super.addMrk(mk);
+      return super.setTapedDev(dev);
     } finally {
       _$_HomeStoreBaseActionController.endAction(_$actionInfo);
     }
   }
 
   @override
-  void clearMrk() {
+  void setLoadedDev(bool lg) {
     final _$actionInfo = _$_HomeStoreBaseActionController.startAction();
     try {
-      return super.clearMrk();
+      return super.setLoadedDev(lg);
     } finally {
       _$_HomeStoreBaseActionController.endAction(_$actionInfo);
     }
