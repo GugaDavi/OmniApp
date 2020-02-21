@@ -6,17 +6,22 @@ import 'package:omni_app/models/dev_model.dart';
 import 'package:omni_app/stores/home_store/home_store.dart';
 import 'package:omni_app/stores/profile_store/profile_store.dart';
 import 'package:omni_app/ui/components/drawer_menu.dart';
+import 'package:omni_app/ui/components/map_card_dev_animation.dart';
 import 'package:omni_app/ui/styles/colors.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_sequence_animation/flutter_sequence_animation.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  AnimationController _animationController;
+  SequenceAnimation sequenceAnimation;
   ProfileStore profileStore;
   Completer<GoogleMapController> _controller;
   FocusNode _inputFocus = FocusNode();
@@ -33,13 +38,33 @@ class _HomeScreenState extends State<HomeScreen> {
       homeStore.setCoordinates(profileStore.userDev.location);
       homeStore.listerDevs(profileStore.userDev.techs.first);
       _controller = Completer();
+      _animationController = AnimationController(vsync: this);
+      sequenceAnimation =
+          AnimationMapCardDev.animation().animate(_animationController);
     }
     builded = true;
+  }
+
+  Future<void> _playIn() async {
+    try {
+      await _animationController.forward().orCancel;
+    } on TickerCanceled {}
+  }
+
+  Future<void> _playOut() async {
+    await _animationController.reverse().orCancel;
+    print('Passou aqui');
+  }
+
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     startState();
+    print(sequenceAnimation['opacity'].value);
     double widthScreenSize = MediaQuery.of(context).size.width;
     return Scaffold(
         drawer: DrawerMenu(),
@@ -60,7 +85,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         LatLng(dev.location.latitude, dev.location.longitude),
                     icon: BitmapDescriptor.defaultMarkerWithHue(
                         BitmapDescriptor.hueGreen),
-                    onTap: () => homeStore.setTapedDev(dev),
+                    onTap: () {
+                      homeStore.setTapedDev(dev);
+                      _playIn();
+                    },
                   ));
                 });
               }
@@ -69,7 +97,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: double.infinity,
                 child: GoogleMap(
                   markers: mrks,
-                  onTap: (LatLng ltLg) => homeStore.setTapedDev(null),
+                  onTap: (LatLng ltLg) async {
+                    await _playOut();
+                    homeStore.setTapedDev(null);
+                  },
                   myLocationButtonEnabled: false,
                   initialCameraPosition: CameraPosition(
                       zoom: 13,
@@ -128,77 +159,93 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          Positioned(
-            bottom: 30,
-            right: 16,
-            left: 16,
-            child: Observer(
-              builder: (_) {
-                if (homeStore.tapedDev != null) {
-                  return GestureDetector(
-                    onTap: () => goToGihub(homeStore.tapedDev.githubUsername),
-                    child: Container(
-                      padding: EdgeInsets.all(16),
-                      height: 110,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: <BoxShadow>[
-                            BoxShadow(
-                                color: Colors.black.withOpacity(0.7),
-                                offset: Offset.fromDirection(10, -3),
-                                blurRadius: 7)
-                          ],
-                          borderRadius: BorderRadius.circular(20)),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(75.0),
-                                child: Image.network(
-                                  homeStore.tapedDev.avatarUrl,
-                                  height: 75,
-                                  width: 75,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 16,
-                              ),
-                              Container(
-                                width: widthScreenSize * 60 / 100,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      homeStore.tapedDev.name,
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    Text(
-                                      homeStore.tapedDev.techs.join(', '),
-                                      style: TextStyle(
-                                          color: primaryDarkColor,
-                                          fontSize: 18),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+          AnimatedBuilder(
+            animation: _animationController,
+            builder: (BuildContext context, _) {
+              return Positioned(
+                bottom: sequenceAnimation['cardUp'].value,
+                right: sequenceAnimation['width'].value,
+                left: sequenceAnimation['width'].value,
+                child: Observer(
+                  builder: (_) {
+                    if (homeStore.tapedDev != null) {
+                      return Opacity(
+                        opacity: sequenceAnimation['opacity'].value,
+                        child: GestureDetector(
+                          onTap: () =>
+                              goToGihub(homeStore.tapedDev.githubUsername),
+                          child: Container(
+                            padding: EdgeInsets.all(16),
+                            height: sequenceAnimation['height'].value,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                      color: Colors.black.withOpacity(0.7),
+                                      offset: Offset.fromDirection(10, -3),
+                                      blurRadius: 7)
+                                ],
+                                borderRadius: BorderRadius.circular(20)),
+                            child: _animationController.isAnimating
+                                ? Container()
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Row(
+                                        children: <Widget>[
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(75.0),
+                                            child: Image.network(
+                                              homeStore.tapedDev.avatarUrl,
+                                              height: 75,
+                                              width: 75,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 16,
+                                          ),
+                                          Container(
+                                            width: widthScreenSize * 60 / 100,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text(
+                                                  homeStore.tapedDev.name,
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 24,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ),
+                                                Text(
+                                                  homeStore.tapedDev.techs
+                                                      .join(', '),
+                                                  style: TextStyle(
+                                                      color: primaryDarkColor,
+                                                      fontSize: 18),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                           ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-                return Container();
-              },
-            ),
-          )
+                        ),
+                      );
+                    }
+                    return Container();
+                  },
+                ),
+              );
+            },
+          ),
         ]));
   }
 

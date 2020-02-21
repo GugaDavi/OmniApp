@@ -123,11 +123,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               _login();
                             },
                     ),
-                    SizedBox(
-                      height: isVisibleKeyboard
-                          ? responsive.sizeCalc(25, SizeDimension.height)
-                          : 0,
-                    )
                   ],
                 ),
               ),
@@ -143,7 +138,8 @@ class _LoginScreenState extends State<LoginScreen> {
       builder: (_) {
         if (loginStore.newUser) {
           loginStore.newDev.form.setLatitude(locationData.latitude.toString());
-          loginStore.newDev.form.setLongitude(locationData.longitude.toString());
+          loginStore.newDev.form
+              .setLongitude(locationData.longitude.toString());
           _latitudeController.text = locationData.latitude.toString();
           _longitudeController.text = locationData.longitude.toString();
         }
