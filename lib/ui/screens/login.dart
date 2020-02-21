@@ -111,18 +111,22 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       height: 10,
                     ),
-                    Button(
-                      child: loginStore.newUser ? 'Cadastrar' : 'Entrar',
-                      onPressed: loginStore.newUser
-                          ? () {
-                              _focus.unfocus();
-                              _newDev();
-                            }
-                          : () {
-                              _focus.unfocus();
-                              _login();
-                            },
-                    ),
+                    Observer(
+                      builder: (_) {
+                        return Button(
+                          child: loginStore.newUser ? 'Cadastrar' : 'Entrar',
+                          onPressed: loginStore.newUser
+                              ? () {
+                                  _focus.unfocus();
+                                  _newDev();
+                                }
+                              : () {
+                                  _focus.unfocus();
+                                  _login();
+                                },
+                        );
+                      },
+                    )
                   ],
                 ),
               ),
