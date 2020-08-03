@@ -23,20 +23,6 @@ abstract class _LoginStoreBase with Store {
   void setAuthenticated() => authenticated = !authenticated;
 
   @observable
-  ObservableList<Widget> inputs = <Widget>[].asObservable();
-  @action
-  void addInput(Widget input) => inputs.add(input);
-  @action
-  void updateInputList(List<Widget> newInputs) {
-    newInputs.forEach((Widget input) {
-      addInput(input);
-    });
-  }
-
-  @action
-  void clearInputList() => inputs.clear();
-
-  @observable
   DevModel userDev;
   @action
   void setDev(DevModel dev) => userDev = dev;
@@ -58,13 +44,11 @@ abstract class _LoginStoreBase with Store {
 
       if (dev == null) {
         setNewUser(true);
-        updateInputList(list);
         return null;
       }
 
       setAuthenticated();
       setDev(dev);
-      clearInputList();
       return dev;
     } catch (e) {
       print(e);
@@ -77,6 +61,7 @@ abstract class _LoginStoreBase with Store {
     newDev.form.setGithubUserName(githubUserName);
     try {
       DevModel dev = await api.addDev(newDev.form.compile());
+      print(dev);
 
       setDev(dev);
       setAuthenticated();

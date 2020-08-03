@@ -32,12 +32,12 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _latitudeController = TextEditingController();
   TextEditingController _longitudeController = TextEditingController();
 
-  void initStates() {
+  Future<void> initStates() async {
     if (!builded) {
       loginControlller = LoginControlller();
       loginStore = Provider.of<LoginStore>(context);
       profileStore = Provider.of<ProfileStore>(context);
-      _getLocation();
+      await _getLocation();
       loginStore.addInput(
         _inputs('GitHub Username', loginControlller.setGithubUserName,
             Icons.person_add,
@@ -84,6 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     void _newDev() async {
       DevModel dev = await loginStore.addDev(loginControlller.githubUserName);
+      print(dev);
       profileStore.setDev(dev);
     }
 

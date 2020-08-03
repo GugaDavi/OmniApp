@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
 import 'package:omni_app/models/dev_model.dart';
 import 'package:http/http.dart' as http;
 
